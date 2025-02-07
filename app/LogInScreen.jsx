@@ -3,8 +3,9 @@ import {useState} from "react"
 import { doc, getDoc } from "firebase/firestore";
 import {db, auth} from "../FirebaseConfig";
 import {signInWithEmailAndPassword} from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function LoginScreen() {
+export default function LoginScreen({setUser}) {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,8 +27,10 @@ export default function LoginScreen() {
         return;
       }
       // navigate a calendario
+      await AsyncStorage.setItem("user", JSON.stringify(userCredentials));
       Alert.alert("todo ok");
       console.log("todo ok");
+      setUser(uid)
     } catch (error) {
       Alert.alert("Error", error.message);
       console.log("contraseña incorrecta!!");
@@ -35,9 +38,9 @@ export default function LoginScreen() {
   };
 
   return (
-    <View>
-      <Text>INICIO DE SESIÓN</Text>
-      <Text>Correo:</Text>
+    <View style={styles.container}>
+      <Text style={styles.label}>INICIO DE SESIÓN</Text>
+      <Text style={styles.label}>Correo:</Text>
       <TextInput
         placeholder="correo@correo.com"
         keyboardType="email-address"
@@ -45,7 +48,7 @@ export default function LoginScreen() {
         onChangeText={(text) => setMail(text)}
         style={styles.input}
       />
-      <Text>Contraseña:</Text>
+      <Text style={styles.label}>Contraseña:</Text>
       <TextInput
         keyboardType="email-address"
         value={password}
@@ -59,10 +62,9 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
     padding: 20,
     backgroundColor: "purple",
+    margin: 20,
   },
   label: {
     fontSize: 16,
